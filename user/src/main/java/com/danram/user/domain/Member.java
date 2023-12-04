@@ -1,14 +1,12 @@
 package com.danram.user.domain;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @Table(name = "member")
@@ -50,11 +48,18 @@ public class Member {
     private LocalDate accessTokenExpiredAt;
 
     @Column(name = "refresh_token", columnDefinition = "text")
-    private LocalDate refreshToken;
+    private String refreshToken;
 
     @Column(name = "refresh_token_expired_at", columnDefinition = "date")
     private LocalDate refreshTokenExpiredAt;
 
-    @CreationTimestamp
+    @Column(name = "created_at", columnDefinition = "datetime")
     private LocalDateTime createdAt;
+
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(
+            name = "member_authority",
+            joinColumns = {@JoinColumn(name = "member_id", referencedColumnName = "member_id")},
+            inverseJoinColumns = {@JoinColumn(name = "authority_name", referencedColumnName = "authority_name")})
+    private List<Authority> authorities;
 }
