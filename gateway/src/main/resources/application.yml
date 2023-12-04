@@ -1,0 +1,49 @@
+
+server:
+  port: ${GATEWAY_PORT}
+
+eureka:
+  client:
+    fetch-registry: true
+    register-with-eureka: true
+    service-url:
+      defaultZone: http://localhost:8761/eureka
+spring:
+  application:
+    name: danram-gateway
+  devtools:
+    livereload:
+      enabled: true
+  cloud:
+    gateway:
+      enabled: true
+      routes:
+        - id: user
+          uri: lb://USER
+          predicates:
+            - Path=/user/**, /univ/**
+          filters:
+            - JwtUserFilter
+
+        - id: no-authority
+          uri: lb://USER
+          predicates:
+            - Path=/auth/**, /login/**, /token/**
+
+        - id: user-admin
+          uri: lb://USER
+          predicates:
+            - Path=/admin/user/**, /admin/univ/**, /admin/token/**
+          filters:
+            - JwtAdminFilter
+
+jwt:
+  secret: ${JWT_SECRET_KEY}
+
+logging:
+  level:
+    org:
+      springframework:
+        cloud:
+          gateway=ERROR:
+
