@@ -18,17 +18,22 @@ spring:
     gateway:
       enabled: true
       routes:
+        - id: no-authority
+          uri: lb://MEMBER
+          predicates:
+            - Path=/auth/**, /token/**, /member/sign-up
+
+        - id: login
+          uri: lb://LOGIN
+          predicates:
+            - Path=/login/**
+
         - id: member
           uri: lb://MEMBER
           predicates:
             - Path=/member/**
           filters:
             - JwtUserFilter
-
-        - id: no-authority
-          uri: lb://MEMBER
-          predicates:
-            - Path=/auth/**, /login/**, /token/**
 
         - id: user-admin
           uri: lb://MEMBER
