@@ -21,7 +21,7 @@ spring:
         - id: user
           uri: lb://USER
           predicates:
-            - Path=/user/**, /univ/**
+            - Path=/user/**
           filters:
             - JwtUserFilter
 
@@ -33,7 +33,7 @@ spring:
         - id: user-admin
           uri: lb://USER
           predicates:
-            - Path=/admin/user/**, /admin/univ/**, /admin/token/**
+            - Path=/admin/**
           filters:
             - JwtAdminFilter
 
