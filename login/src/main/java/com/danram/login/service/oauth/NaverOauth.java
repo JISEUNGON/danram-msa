@@ -85,8 +85,8 @@ public class NaverOauth implements SocialOauth {
 
         return OauthLoginResponseDto.builder()
                 .email(profileElement.get("email").getAsString())
-                .nickname(profileElement.get("name").getAsString())
-                .profileImg("기본 이미지 URL")
+                .nickname(profileElement.get("nickname").getAsString())
+                .profileImg("profile_image")
                 .loginType(0L)
                 .build();
     }
