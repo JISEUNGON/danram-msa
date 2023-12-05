@@ -76,4 +76,19 @@ public class MemberServiceImpl implements MemberService {
 
         return modelMapper.map(member1, LoginResponseDto.class);
     }
+
+    @Override
+    public String verifyToken(final String token) {
+        final Optional<Member> byAccessToken = memberRepository.findByAccessToken(token);
+
+        if(byAccessToken.isEmpty()) {
+            return null;
+        }
+        else
+        {
+            Member member = byAccessToken.get();
+
+            return member.getRole();
+        }
+    }
 }

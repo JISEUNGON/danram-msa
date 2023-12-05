@@ -12,4 +12,5 @@ public interface MemberService {
     public Optional<Member> checkDuplicatedEmail(String email);
     public LoginResponseDto signUp(OauthLoginRequestDto dto);
     public LoginResponseDto signIn(Member member);
+    public String verifyToken(String token);
 }

@@ -21,7 +21,7 @@ spring:
         - id: no-authority
           uri: lb://MEMBER
           predicates:
-            - Path=/auth/**, /token/**, /member/sign-up
+            - Path=/auth/**, /token/**, /member/sign-up, /member/verify
 
         - id: login
           uri: lb://LOGIN

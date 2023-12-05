@@ -2,17 +2,20 @@ package com.danram.gateway.filter;
 
 import com.danram.gateway.util.JwtUtil;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.gateway.filter.GatewayFilter;
 import org.springframework.cloud.gateway.filter.factory.AbstractGatewayFilterFactory;
 import org.springframework.core.io.buffer.DataBuffer;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
+import org.springframework.http.*;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.http.server.reactive.ServerHttpResponse;
 import org.springframework.stereotype.Component;
+import org.springframework.web.client.RestTemplate;
 import reactor.core.publisher.Flux;
 
 import java.nio.charset.StandardCharsets;
+import java.util.HashMap;
+import java.util.Map;
 
 @Component
 @Slf4j
@@ -20,6 +23,9 @@ public class JwtAdminFilter extends AbstractGatewayFilterFactory<JwtAdminFilter.
     public JwtAdminFilter() {
         super(Config.class);
     }
+
+    @Value("${server.port}")
+    private Long port;
 
     @Override
     public GatewayFilter apply(final Config config) {
@@ -66,10 +72,14 @@ public class JwtAdminFilter extends AbstractGatewayFilterFactory<JwtAdminFilter.
                 return response.writeWith(Flux.just(newResponseData));
             }
 
-            if(JwtUtil.getRoles(token).contains("ROLE_ADMIN")) {
-                log.info("role: {}", "ROLE_ADMIN");
-            }
-            else {
+            //token이 디비에 존재하는지 검증 + 권한 검증
+            RestTemplate restTemplate = new RestTemplate();
+
+            HttpEntity<String> requestEntity = new HttpEntity<>(token);
+
+            final String tokenResponse = restTemplate.exchange("http://localhost:" + port + "/member/verify", HttpMethod.POST, requestEntity, String.class).getBody();
+
+            if(tokenResponse == null || !tokenResponse.equals("ROLE_ADMIN")) {
                 response.setStatusCode(HttpStatus.UNAUTHORIZED);
                 // 응답 내용 수정
                 String modifiedResponse = "Token is not admin token.";

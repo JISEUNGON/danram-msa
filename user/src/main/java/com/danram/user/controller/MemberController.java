@@ -31,4 +31,9 @@ public class MemberController {
             return ResponseEntity.ok(memberService.signIn(result.get()));
         }
     }
+
+    @PostMapping("/verify")
+    public ResponseEntity<String> tokenExist(@RequestBody String token) {
+        return ResponseEntity.ok(memberService.verifyToken(token));
+    }
 }
