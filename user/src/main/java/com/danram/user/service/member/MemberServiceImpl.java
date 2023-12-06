@@ -3,6 +3,7 @@ package com.danram.user.service.member;
 import com.danram.user.domain.Authority;
 import com.danram.user.domain.Member;
 import com.danram.user.dto.request.login.OauthLoginRequestDto;
+import com.danram.user.dto.request.token.TokenReissueResponseDto;
 import com.danram.user.dto.response.login.LoginResponseDto;
 import com.danram.user.exception.member.MemberIdNotFoundException;
 import com.danram.user.repository.MemberRepository;
@@ -75,8 +76,10 @@ public class MemberServiceImpl implements MemberService {
     }
 
     @Override
-    public String verifyToken(final String token) {
-        final Optional<Member> byAccessToken = memberRepository.findByAccessToken(token);
+    public String verifyMember() {
+        final Optional<Member> byAccessToken = memberRepository.findByAccessTokenAndMemberId(
+                JwtUtil.getAccessToken(), JwtUtil.getMemberIdFromHeader()
+        );
 
         if(byAccessToken.isEmpty()) {
             return null;
@@ -94,5 +97,11 @@ public class MemberServiceImpl implements MemberService {
         return memberRepository.findById(JwtUtil.getMemberId()).orElseThrow(
                 () -> new MemberIdNotFoundException(JwtUtil.getMemberId())
         ).getAuthorities();
+    }
+
+    @Override
+    public TokenReissueResponseDto reissueToken() {
+
+        return null;
     }
 }

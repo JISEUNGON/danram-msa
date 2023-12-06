@@ -35,6 +35,18 @@ public class JwtAdminFilter extends AbstractGatewayFilterFactory<JwtAdminFilter.
 
             //header 값
             String authorizationHeader = request.getHeaders().getFirst(HttpHeaders.AUTHORIZATION);
+            String memberIdString = request.getHeaders().getFirst("MemberId");
+
+            if(memberIdString == null || !memberIdString.startsWith("DHI ")) {
+                response.setStatusCode(HttpStatus.UNAUTHORIZED);
+                // 응답 내용 수정
+                String modifiedResponse = "Member id header is null";
+                DataBuffer newResponseData = response.bufferFactory().wrap(modifiedResponse.getBytes(StandardCharsets.UTF_8));
+                response.getHeaders().setContentLength(modifiedResponse.length());
+
+                return response.writeWith(Flux.just(newResponseData));
+            }
+
 
             // bearer이 아니면 오류
             if (authorizationHeader == null || !authorizationHeader.startsWith("Bearer ")) {
@@ -47,8 +59,9 @@ public class JwtAdminFilter extends AbstractGatewayFilterFactory<JwtAdminFilter.
                 return response.writeWith(Flux.just(newResponseData));
             }
 
-            // Token 꺼내기
+            // Token, memberId 꺼내기
             String token = authorizationHeader.split(" ")[1];
+            Long memberId = Long.parseLong(memberIdString.split(" ")[1]);
 
             // Token 검증
             if (!JwtUtil.validateToken(token)) {
@@ -75,9 +88,17 @@ public class JwtAdminFilter extends AbstractGatewayFilterFactory<JwtAdminFilter.
             //token이 디비에 존재하는지 검증 + 권한 검증
             RestTemplate restTemplate = new RestTemplate();
 
-            HttpEntity<String> requestEntity = new HttpEntity<>(token);
+            //header 설정
+            HttpHeaders headers = new HttpHeaders();
 
-            final String tokenResponse = restTemplate.exchange("http://localhost:" + port + "/member/verify", HttpMethod.POST, requestEntity, String.class).getBody();
+            headers.setContentType(MediaType.APPLICATION_JSON); // Content-Type 헤더 설정
+            headers.set("Authorization", "Bearer " + token);
+            headers.set("MemberId", "DHI " + memberId);
+
+
+            HttpEntity<String> requestEntity = new HttpEntity<>(null, headers);
+
+            final String tokenResponse = restTemplate.exchange("http://localhost:" + port + "/member/verify", HttpMethod.GET, requestEntity, String.class).getBody();
 
             if(tokenResponse == null || !tokenResponse.equals("ROLE_ADMIN")) {
                 response.setStatusCode(HttpStatus.UNAUTHORIZED);

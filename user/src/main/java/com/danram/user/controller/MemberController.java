@@ -33,7 +33,7 @@ public class MemberController {
     }
 
     @PostMapping("/verify")
-    public ResponseEntity<String> tokenExist(@RequestBody String token) {
-        return ResponseEntity.ok(memberService.verifyToken(token));
+    public ResponseEntity<String> tokenExist() {
+        return ResponseEntity.ok(memberService.verifyMember());
     }
 }

@@ -6,10 +6,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.gateway.filter.GatewayFilter;
 import org.springframework.cloud.gateway.filter.factory.AbstractGatewayFilterFactory;
 import org.springframework.core.io.buffer.DataBuffer;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.HttpStatus;
+import org.springframework.http.*;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.http.server.reactive.ServerHttpResponse;
 import org.springframework.stereotype.Component;
@@ -36,6 +33,17 @@ public class JwtUserFilter extends AbstractGatewayFilterFactory<JwtUserFilter.Co
 
             //header 값
             String authorizationHeader = request.getHeaders().getFirst(HttpHeaders.AUTHORIZATION);
+            String memberIdString = request.getHeaders().getFirst("MemberId");
+
+            if(memberIdString == null || !memberIdString.startsWith("DHI ")) {
+                response.setStatusCode(HttpStatus.UNAUTHORIZED);
+                // 응답 내용 수정
+                String modifiedResponse = "Member id header is null";
+                DataBuffer newResponseData = response.bufferFactory().wrap(modifiedResponse.getBytes(StandardCharsets.UTF_8));
+                response.getHeaders().setContentLength(modifiedResponse.length());
+
+                return response.writeWith(Flux.just(newResponseData));
+            }
 
             // bearer이 아니면 오류
             if (authorizationHeader == null || !authorizationHeader.startsWith("Bearer ")) {
@@ -48,8 +56,9 @@ public class JwtUserFilter extends AbstractGatewayFilterFactory<JwtUserFilter.Co
                 return response.writeWith(Flux.just(newResponseData));
             }
 
-            // Token 꺼내기
+            // Token, memberId 꺼내기
             String token = authorizationHeader.split(" ")[1];
+            Long memberId = Long.parseLong(memberIdString.split("DHI ")[1]);
 
             // Token 검증
             if (!JwtUtil.validateToken(token)) {
@@ -76,7 +85,14 @@ public class JwtUserFilter extends AbstractGatewayFilterFactory<JwtUserFilter.Co
             //token이 디비에 존재하는지 검증 + 권한 검증
             RestTemplate restTemplate = new RestTemplate();
 
-            HttpEntity<String> requestEntity = new HttpEntity<>(token);
+            //header 설
+            HttpHeaders headers = new HttpHeaders();
+
+            headers.setContentType(MediaType.APPLICATION_JSON); // Content-Type 헤더 설정
+            headers.set("Authorization", "Bearer " + token);
+            headers.set("MemberId", "DHI " + memberId.toString());
+
+            HttpEntity<String> requestEntity = new HttpEntity<>(null, headers);
 
             final String tokenResponse = restTemplate.exchange("http://localhost:" + port + "/member/verify", HttpMethod.POST, requestEntity, String.class).getBody();
 
