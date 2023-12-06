@@ -2,6 +2,7 @@ package com.danram.user.exception;
 
 import com.danram.user.exception.member.MemberEmailNotFoundException;
 import com.danram.user.exception.member.MemberIdNotFoundException;
+import com.danram.user.exception.member.MemberNotExistException;
 import com.danram.user.exception.s3.FileNameNotValidException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -33,6 +34,13 @@ public class ApiExceptionHandler {
     @ExceptionHandler(MemberEmailNotFoundException.class)
     public ResponseEntity<ApiErrorResponse> handleException(MemberEmailNotFoundException ex) {
         ApiErrorResponse response = new ApiErrorResponse("DEM-002", "Member email is not found: " + ex.getMessage());
+
+        return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(MemberNotExistException.class)
+    public ResponseEntity<ApiErrorResponse> handleException(MemberNotExistException ex) {
+        ApiErrorResponse response = new ApiErrorResponse("DEM-003", "There is not member.");
 
         return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
     }

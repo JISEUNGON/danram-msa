@@ -10,6 +10,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/admin")
 @RequiredArgsConstructor
@@ -20,5 +22,10 @@ public class AdminController {
     @GetMapping("/member")
     public ResponseEntity<MemberAdminResponseDto> getMemberIfo(@RequestParam String email) {
         return ResponseEntity.ok(memberService.getMemberInfo(email));
+    }
+
+    @GetMapping("/member/all")
+    public ResponseEntity<List<MemberAdminResponseDto>> getMembers() {
+        return ResponseEntity.ok(memberService.getMembers());
     }
 }

@@ -8,15 +8,18 @@ import com.danram.user.dto.request.token.TokenReissueResponseDto;
 import com.danram.user.dto.response.login.LoginResponseDto;
 import com.danram.user.exception.member.MemberEmailNotFoundException;
 import com.danram.user.exception.member.MemberIdNotFoundException;
+import com.danram.user.exception.member.MemberNotExistException;
 import com.danram.user.repository.MemberRepository;
 import com.danram.user.util.JwtUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Sort;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -107,6 +110,23 @@ public class MemberServiceImpl implements MemberService {
         map.setCreatedAt(member.getCreatedAt().format(DateTimeFormatter.ofPattern("yyyy-MM-dd hh-mm-ss")));
 
         return map;
+    }
+
+    @Override
+    @Transactional
+    public List<MemberAdminResponseDto> getMembers() {
+        List<Member> members = memberRepository.findBySignOutFalse(Sort.by(Sort.Direction.ASC, "createdAt"));
+        List<MemberAdminResponseDto> memberAdminResponseDtos = new ArrayList<>();
+
+        for(Member member: members) {
+            MemberAdminResponseDto map = modelMapper.map(member, MemberAdminResponseDto.class);
+
+            map.setCreatedAt(member.getCreatedAt().format(DateTimeFormatter.ofPattern("yyy-MM-dd hh-mm-ss")));
+
+            memberAdminResponseDtos.add(map);
+        }
+
+        return memberAdminResponseDtos;
     }
 
     @Override

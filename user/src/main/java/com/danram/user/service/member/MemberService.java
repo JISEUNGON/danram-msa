@@ -19,4 +19,6 @@ public interface MemberService {
     public TokenReissueResponseDto reissueToken();
     public String verifyMember();
     public MemberAdminResponseDto getMemberInfo(String memberId);
+
+    public List<MemberAdminResponseDto> getMembers();
 }
