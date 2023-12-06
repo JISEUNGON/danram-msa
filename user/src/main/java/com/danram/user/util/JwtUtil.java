@@ -38,7 +38,6 @@ public class JwtUtil {
 
         Map<String, Object> claims = new HashMap<>();
         claims.put("id", memberId);
-        claims.put("roles", Arrays.asList("ROLE_ADMIN", "ROLE_USER"));
 
         return Jwts.builder()
                 .setClaims(claims)
@@ -89,18 +88,6 @@ public class JwtUtil {
                 .getBody();
 
         return body.get("id", Long.class);
-    }
-
-    public static List<String> getRoles() {
-        String token = JwtUtil.getAccessToken();
-
-        Claims body = Jwts.parserBuilder()
-                .setSigningKey(JWT_SECRET_KEY)
-                .build()
-                .parseClaimsJws(token)
-                .getBody();
-
-        return body.get("roles", List.class);
     }
 
     public static String getAccessToken() {

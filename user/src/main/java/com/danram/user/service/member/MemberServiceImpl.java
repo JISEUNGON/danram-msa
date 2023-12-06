@@ -53,9 +53,6 @@ public class MemberServiceImpl implements MemberService {
                 .refreshTokenExpiredAt(LocalDate.now().plusYears(1))
                 .authorities(List.of(
                         Authority.builder()
-                                .authorityName("ROLE_ADMIN")
-                                .build()
-                        , Authority.builder()
                                 .authorityName("ROLE_USER")
                                 .build()
                 ))
