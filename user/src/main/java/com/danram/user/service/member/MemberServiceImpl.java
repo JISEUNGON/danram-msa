@@ -3,8 +3,10 @@ package com.danram.user.service.member;
 import com.danram.user.domain.Authority;
 import com.danram.user.domain.Member;
 import com.danram.user.dto.request.login.OauthLoginRequestDto;
+import com.danram.user.dto.response.member.MemberAdminResponseDto;
 import com.danram.user.dto.request.token.TokenReissueResponseDto;
 import com.danram.user.dto.response.login.LoginResponseDto;
+import com.danram.user.exception.member.MemberEmailNotFoundException;
 import com.danram.user.exception.member.MemberIdNotFoundException;
 import com.danram.user.repository.MemberRepository;
 import com.danram.user.util.JwtUtil;
@@ -14,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Optional;
 
@@ -90,6 +93,20 @@ public class MemberServiceImpl implements MemberService {
 
             return member.getRole();
         }
+    }
+
+    @Override
+    @Transactional
+    public MemberAdminResponseDto getMemberInfo(String email) {
+        Member member = memberRepository.findByEmail(email).orElseThrow(
+                () -> new MemberEmailNotFoundException(email)
+        );
+
+        MemberAdminResponseDto map = modelMapper.map(member, MemberAdminResponseDto.class);
+
+        map.setCreatedAt(member.getCreatedAt().format(DateTimeFormatter.ofPattern("yyyy-MM-dd hh-mm-ss")));
+
+        return map;
     }
 
     @Override

@@ -9,7 +9,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 import java.util.Optional;
 
 @RestController
@@ -32,7 +31,7 @@ public class MemberController {
         }
     }
 
-    @PostMapping("/verify")
+    @GetMapping ("/verify")
     public ResponseEntity<String> tokenExist() {
         return ResponseEntity.ok(memberService.verifyMember());
     }

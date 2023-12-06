@@ -3,6 +3,7 @@ package com.danram.user.service.member;
 import com.danram.user.domain.Authority;
 import com.danram.user.domain.Member;
 import com.danram.user.dto.request.login.OauthLoginRequestDto;
+import com.danram.user.dto.response.member.MemberAdminResponseDto;
 import com.danram.user.dto.request.token.TokenReissueResponseDto;
 import com.danram.user.dto.response.login.LoginResponseDto;
 
@@ -17,4 +18,5 @@ public interface MemberService {
     public List<Authority> getAuthorities();
     public TokenReissueResponseDto reissueToken();
     public String verifyMember();
+    public MemberAdminResponseDto getMemberInfo(String memberId);
 }

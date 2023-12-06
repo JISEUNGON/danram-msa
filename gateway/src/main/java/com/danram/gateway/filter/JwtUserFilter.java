@@ -94,7 +94,7 @@ public class JwtUserFilter extends AbstractGatewayFilterFactory<JwtUserFilter.Co
 
             HttpEntity<String> requestEntity = new HttpEntity<>(null, headers);
 
-            final String tokenResponse = restTemplate.exchange("http://localhost:" + port + "/member/verify", HttpMethod.POST, requestEntity, String.class).getBody();
+            final String tokenResponse = restTemplate.exchange("http://localhost:" + port + "/member/verify", HttpMethod.GET, requestEntity, String.class).getBody();
 
             if(tokenResponse == null) {
                 log.info("role: {}", "ROLE_USER");
