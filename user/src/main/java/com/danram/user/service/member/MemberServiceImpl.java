@@ -88,4 +88,11 @@ public class MemberServiceImpl implements MemberService {
             return member.getRole();
         }
     }
+
+    @Override
+    public List<Authority> getAuthorities() {
+        return memberRepository.findById(JwtUtil.getMemberId()).orElseThrow(
+                () -> new MemberIdNotFoundException(JwtUtil.getMemberId())
+        ).getAuthorities();
+    }
 }
