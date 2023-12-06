@@ -40,16 +40,6 @@ public class JwtUtil {
         return isExpired;
     }
 
-    public static List<String> getRoles(String token) {
-        Claims body = Jwts.parserBuilder()
-                .setSigningKey(JWT_SECRET_KEY)
-                .build()
-                .parseClaimsJws(token)
-                .getBody();
-
-        return body.get("roles", List.class);
-    }
-
     /**
      * 토큰의 유효성  검증을 수행하는 validateToken 메소드
      * */
