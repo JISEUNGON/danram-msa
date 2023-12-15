@@ -175,6 +175,8 @@ public class MemberServiceImpl implements MemberService {
                 () -> new MemberIdNotFoundException(JwtUtil.getMemberId())
         );
 
+        memberRepository.delete(member);
+
         final DeletedMember map = modelMapper.map(member, DeletedMember.class);
 
         deletedMemberRepository.save(map);
