@@ -1,6 +1,7 @@
 package com.danram.user.config;
 
 import com.amazonaws.services.s3.AmazonS3;
+import com.danram.user.repository.DeletedMemberRepository;
 import com.danram.user.repository.MemberRepository;
 import com.danram.user.service.member.MemberService;
 import com.danram.user.service.member.MemberServiceImpl;
@@ -14,8 +15,8 @@ import org.springframework.context.annotation.Configuration;
 @RequiredArgsConstructor
 public class SpringConfig {
     @Bean
-    public MemberService memberService(MemberRepository memberRepository) {
-        return new MemberServiceImpl(memberRepository);
+    public MemberService memberService(MemberRepository memberRepository, DeletedMemberRepository deletedMemberRepository) {
+        return new MemberServiceImpl(memberRepository, deletedMemberRepository);
     }
 
     @Bean

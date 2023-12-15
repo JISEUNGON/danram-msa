@@ -2,20 +2,19 @@ package com.danram.user.domain;
 
 import jakarta.persistence.*;
 import lombok.*;
-import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
 @Entity
-@Table(name = "member")
+@Table(name = "deleted_member")
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
 @Getter
 @Setter
-public class Member {
+public class DeletedMember {
     @Id
     @Column(name = "member_id", columnDefinition = "bigint")
     public Long memberId;

@@ -2,6 +2,7 @@ package com.danram.user.exception;
 
 import com.danram.user.exception.member.MemberEmailNotFoundException;
 import com.danram.user.exception.member.MemberIdNotFoundException;
+import com.danram.user.exception.member.MemberLoginTypeNotExistException;
 import com.danram.user.exception.member.MemberNotExistException;
 import com.danram.user.exception.s3.FileNameNotValidException;
 import org.springframework.http.HttpStatus;
@@ -41,6 +42,13 @@ public class ApiExceptionHandler {
     @ExceptionHandler(MemberNotExistException.class)
     public ResponseEntity<ApiErrorResponse> handleException(MemberNotExistException ex) {
         ApiErrorResponse response = new ApiErrorResponse("DEM-003", "There is not member.");
+
+        return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(MemberLoginTypeNotExistException.class)
+    public ResponseEntity<ApiErrorResponse> handleException(MemberLoginTypeNotExistException ex) {
+        ApiErrorResponse response = new ApiErrorResponse("DEM-004", "This login type is not exist: " + ex.getMessage());
 
         return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
     }

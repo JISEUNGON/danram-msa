@@ -1,19 +1,27 @@
 package com.danram.user.service.member;
 
 import com.danram.user.domain.Authority;
+import com.danram.user.domain.DeletedMember;
 import com.danram.user.domain.Member;
 import com.danram.user.dto.request.login.OauthLoginRequestDto;
+import com.danram.user.dto.request.member.MemberEditRequestDto;
 import com.danram.user.dto.response.member.MemberAdminResponseDto;
 import com.danram.user.dto.request.token.TokenReissueResponseDto;
 import com.danram.user.dto.response.login.LoginResponseDto;
+import com.danram.user.dto.response.member.MemberInfoResponseDto;
+import com.danram.user.dto.response.member.MemberResponseDto;
+import com.danram.user.dto.response.token.TokenResponseDto;
 import com.danram.user.exception.member.MemberEmailNotFoundException;
 import com.danram.user.exception.member.MemberIdNotFoundException;
+import com.danram.user.exception.member.MemberLoginTypeNotExistException;
 import com.danram.user.exception.member.MemberNotExistException;
+import com.danram.user.repository.DeletedMemberRepository;
 import com.danram.user.repository.MemberRepository;
 import com.danram.user.util.JwtUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
@@ -29,6 +37,7 @@ import static com.danram.user.config.MapperConfig.modelMapper;
 @Slf4j
 public class MemberServiceImpl implements MemberService {
     private final MemberRepository memberRepository;
+    private final DeletedMemberRepository deletedMemberRepository;
 
     @Override
     public List<Member> findAll() {
@@ -53,7 +62,6 @@ public class MemberServiceImpl implements MemberService {
                 .pro(false)
                 .nickname(dto.getNickname())
                 .email(dto.getEmail())
-                .signOut(false)
                 .accessToken(JwtUtil.createJwt(memberId))
                 .accessTokenExpiredAt(LocalDate.now().plusYears(1))
                 .refreshToken(JwtUtil.createRefreshToken(memberId))
@@ -115,7 +123,7 @@ public class MemberServiceImpl implements MemberService {
     @Override
     @Transactional
     public List<MemberAdminResponseDto> getMembers() {
-        List<Member> members = memberRepository.findBySignOutFalse(Sort.by(Sort.Direction.ASC, "createdAt"));
+        List<Member> members = memberRepository.findMemberBy(Sort.by(Sort.Direction.ASC, "createdAt"));
         List<MemberAdminResponseDto> memberAdminResponseDtos = new ArrayList<>();
 
         for(Member member: members) {
@@ -130,15 +138,84 @@ public class MemberServiceImpl implements MemberService {
     }
 
     @Override
+    public MemberResponseDto getInfo() {
+        Member member = memberRepository.findById(JwtUtil.getMemberId()).orElseThrow(
+                () -> new MemberIdNotFoundException(JwtUtil.getMemberId())
+        );
+
+        return modelMapper.map(member, MemberResponseDto.class);
+    }
+
+    @Override
+    @Transactional
+    public MemberInfoResponseDto editInfo(final MemberEditRequestDto memberEditRequestDto, final String upload) {
+        Member member = memberRepository.findById(JwtUtil.getMemberId()).orElseThrow(
+                () -> new MemberIdNotFoundException(JwtUtil.getMemberId())
+        );
+
+        if(!upload.equals(""))
+            member.setImg(upload);
+
+        if(!member.getNickname().equals(memberEditRequestDto.getNickname()) && !memberEditRequestDto.getNickname().trim().isEmpty())
+            member.setNickname(memberEditRequestDto.getNickname());
+        else
+            log.warn("member id: {} input white space name", memberEditRequestDto.getNickname());
+
+        MemberInfoResponseDto map = modelMapper.map(member, MemberInfoResponseDto.class);
+
+        map.setLoginType(getLoginType(member));
+
+        return map;
+    }
+
+    @Override
+    @Transactional
+    public void signOut() {
+        Member member = memberRepository.findById(JwtUtil.getMemberId()).orElseThrow(
+                () -> new MemberIdNotFoundException(JwtUtil.getMemberId())
+        );
+
+        final DeletedMember map = modelMapper.map(member, DeletedMember.class);
+
+        deletedMemberRepository.save(map);
+    }
+
+    @Override
+    @Transactional
+    public TokenResponseDto reissueAccessToken() {
+        String accessToken = JwtUtil.getAccessToken();
+        String refreshToken = JwtUtil.getRefreshToken();
+        Long id = JwtUtil.getMemberId();
+
+        Member member = memberRepository.findByMemberIdAndAccessTokenAndRefreshToken(id, accessToken,refreshToken)
+                .orElseThrow(() -> new MemberIdNotFoundException(id));
+
+        member.setAccessToken(JwtUtil.createJwt(id));
+        member.setAccessTokenExpiredAt(LocalDate.now().plusDays(JwtUtil.ACCESS_TOKEN_EXPIRE_TIME));
+        memberRepository.save(member);
+
+        return modelMapper.map(member, TokenResponseDto.class);
+    }
+
+    @Override
+    @Transactional
     public List<Authority> getAuthorities() {
         return memberRepository.findById(JwtUtil.getMemberId()).orElseThrow(
                 () -> new MemberIdNotFoundException(JwtUtil.getMemberId())
         ).getAuthorities();
     }
 
-    @Override
-    public TokenReissueResponseDto reissueToken() {
-
-        return null;
+    private String getLoginType(Member member) {
+        if(member.getLoginType() == 0L) {
+            return "Google";
+        } else if(member.getLoginType() == 1L) {
+            return "Kakao";
+        } else if(member.getLoginType() == 3L) {
+            return "apple";
+        }
+        else
+        {
+            throw new MemberLoginTypeNotExistException(member.getLoginType());
+        }
     }
 }
