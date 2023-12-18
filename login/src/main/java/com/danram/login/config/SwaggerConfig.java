@@ -1,4 +1,4 @@
-package com.danram.user.config;
+package com.danram.login.config;
 
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.annotations.info.Info;
@@ -14,8 +14,8 @@ import java.util.List;
 import java.util.Set;
 
 @OpenAPIDefinition(
-        info=@Info(title = "Danram User Service",
-                description = "단람 유저 관련 API",
+        info=@Info(title = "Danram Login Service",
+                description = "단람 로그인 API",
                 version ="v1"))
 @Configuration
 public class SwaggerConfig {
