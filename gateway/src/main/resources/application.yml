@@ -47,6 +47,13 @@ spring:
           filters:
             - JwtUserFilter
 
+        - id: feed
+          uri: lb://FEED
+          predicates:
+            - Path=/FEED/**
+          filters:
+            - JwtUserFilter
+
         - id: user-admin
           uri: lb://MEMBER
           predicates:
