@@ -57,7 +57,7 @@ public class PartyController {
     @ApiResponses({
             @ApiResponse(responseCode = "200",description = "모임 추가 성공")
     })
-    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PostMapping(value= "/add", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<AddPartyResponseDto> addParty(@ModelAttribute AddPartyRequestDto dto) throws IOException {
         String imgUrl = null;
 

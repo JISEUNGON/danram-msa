@@ -23,6 +23,11 @@ spring:
           predicates:
             - Path=/token/**, /member/sign-up, /member/verify, /member/swagger-ui.html, /member/nickname
 
+        - id: no-authority-party
+          uri: lb://PARTY
+          predicates:
+            - Path=/party, /party/search, /party/member/all
+
         - id: login
           uri: lb://LOGIN
           predicates:
@@ -34,6 +39,20 @@ spring:
             - Path=/member/**, /auth/**, /token/**
           filters:
             - JwtUserFilter
+
+        - id: party
+          uri: lb://PARTY
+          predicates:
+            - Path=/party/**
+          filters:
+            - JwtUserFilter
+
+        - id: user-admin
+          uri: lb://MEMBER
+          predicates:
+            - Path=/admin/**
+          filters:
+            - JwtAdminFilter
 
         - id: user-admin
           uri: lb://MEMBER
