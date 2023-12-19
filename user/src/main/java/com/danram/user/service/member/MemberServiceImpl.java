@@ -201,6 +201,14 @@ public class MemberServiceImpl implements MemberService {
 
     @Override
     @Transactional
+    public String getInfo(final Long id) {
+        final Optional<Member> byId = memberRepository.findById(id);
+
+        return byId.isEmpty() ? null : byId.get().getNickname();
+    }
+
+    @Override
+    @Transactional
     public List<Authority> getAuthorities() {
         return memberRepository.findById(JwtUtil.getMemberId()).orElseThrow(
                 () -> new MemberIdNotFoundException(JwtUtil.getMemberId())

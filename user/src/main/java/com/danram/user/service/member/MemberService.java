@@ -10,6 +10,7 @@ import com.danram.user.dto.response.login.LoginResponseDto;
 import com.danram.user.dto.response.member.MemberInfoResponseDto;
 import com.danram.user.dto.response.member.MemberResponseDto;
 import com.danram.user.dto.response.token.TokenResponseDto;
+import org.springframework.http.ResponseEntity;
 
 import java.util.List;
 import java.util.Optional;
@@ -27,4 +28,5 @@ public interface MemberService {
     public MemberInfoResponseDto editInfo(MemberEditRequestDto memberEditRequestDto, String upload);
     public void signOut();
     public TokenResponseDto reissueAccessToken();
+    public String getInfo(Long id);
 }

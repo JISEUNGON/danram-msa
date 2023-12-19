@@ -66,4 +66,12 @@ public class MemberController {
         memberService.signOut();
         return ResponseEntity.ok().build();
     }
+
+    /**
+     * free
+     * */
+    @GetMapping("/nickname")
+    public ResponseEntity<String> getInfo(@RequestParam Long id) {
+        return ResponseEntity.ok(memberService.getInfo(id));
+    }
 }
