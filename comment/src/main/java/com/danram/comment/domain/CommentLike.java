@@ -1,4 +1,4 @@
-package com.danram.feed.domain;
+package com.danram.comment.domain;
 
 import jakarta.persistence.*;
 import lombok.*;
@@ -8,13 +8,13 @@ import org.hibernate.annotations.UpdateTimestamp;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "feed_like")
+@Table(name = "comment_like")
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
 @Getter
 @Setter
-public class FeedLike {
+public class CommentLike {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "like_id", columnDefinition = "int")
@@ -26,10 +26,10 @@ public class FeedLike {
     @Column(name = "member_email", columnDefinition = "varchar", length = 50)
     private String memberEmail;
 
-    @Column(name = "feed_id", columnDefinition = "int")
-    private Long feedId;
+    @Column(name = "comment_id", columnDefinition = "int")
+    private Long commentId;
 
-    @Column(name = "created_at", columnDefinition = "date")
+    @Column(name = "created_at", columnDefinition = "datetime")
     @UpdateTimestamp
     private LocalDateTime createdAt;
 

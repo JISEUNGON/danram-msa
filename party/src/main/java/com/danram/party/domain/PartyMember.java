@@ -27,7 +27,7 @@ public class PartyMember {
     @ManyToOne(fetch = FetchType.LAZY,cascade = CascadeType.ALL)
     private Party party;
 
-    @CreationTimestamp
+    @UpdateTimestamp
     @Column(name = "created_at", columnDefinition = "date")
     private LocalDate updatedAt;
 

@@ -1,24 +1,26 @@
-package com.danram.feed.domain;
+package com.danram.comment.domain;
 
 import jakarta.persistence.*;
 import lombok.*;
-import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "feed_like")
+@Table(name = "comment")
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
 @Getter
 @Setter
-public class FeedLike {
+public class Comment {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "like_id", columnDefinition = "int")
-    private Long likeId;
+    @Column(name = "comment_id", columnDefinition = "int")
+    private Long commentId;
+
+    @Column(name = "feed_id", columnDefinition = "int")
+    private Long feedId;
 
     @Column(name = "member_id", columnDefinition = "bigint")
     private Long memberId;
@@ -26,12 +28,15 @@ public class FeedLike {
     @Column(name = "member_email", columnDefinition = "varchar", length = 50)
     private String memberEmail;
 
-    @Column(name = "feed_id", columnDefinition = "int")
-    private Long feedId;
+    @Column(name = "content", columnDefinition = "varchar", length = 200)
+    private String content;
 
-    @Column(name = "created_at", columnDefinition = "date")
+    @Column(name = "parent_id", columnDefinition = "int")
+    private Long parentId;
+
+    @Column(name = "updated_at", columnDefinition = "datetime")
     @UpdateTimestamp
-    private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
 
     @Column(name = "deleted", columnDefinition = "tinyint")
     private Boolean deleted;

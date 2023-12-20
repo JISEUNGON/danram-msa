@@ -38,6 +38,11 @@ spring:
           predicates:
             - Path=/feed/all
 
+        - id: no-authority-comment
+          uri: lb://COMMENT
+          predicates:
+            - Path=/comment/all
+
         - id: member
           uri: lb://MEMBER
           predicates:
@@ -56,6 +61,13 @@ spring:
           uri: lb://FEED
           predicates:
             - Path=/feed/**
+          filters:
+            - JwtUserFilter
+
+        - id: comment
+          uri: lb://COMMENT
+          predicates:
+            Path=/comment/**
           filters:
             - JwtUserFilter
 
