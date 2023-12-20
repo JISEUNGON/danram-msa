@@ -1,7 +1,11 @@
 package com.danram.feed.controller;
 
+import com.danram.feed.dto.request.FeedEditRequestDto;
 import com.danram.feed.dto.request.feed.FeedAddRequestDto;
+import com.danram.feed.dto.response.FeedEditResponseDto;
 import com.danram.feed.dto.response.feed.FeedAddResponseDto;
+import com.danram.feed.dto.response.feed.FeedAllInfoResponseDto;
+import com.danram.feed.dto.response.feed.FeedLikeResponseDto;
 import com.danram.feed.service.feed.FeedService;
 import com.danram.feed.service.s3.S3UploadService;
 import lombok.RequiredArgsConstructor;
@@ -22,15 +26,11 @@ import java.util.List;
 public class FeedController {
     /**
      * TODO
-     * 피드 수정
-     * 피드 삭제
-     * 피드 추가
      * 피드 신고
      * 알람 보기
      * 알람 추가
      * 알람 삭제
      * 알람 수정
-     * 좋아요
      * */
     private final FeedService feedService;
     private final S3UploadService s3UploadService;
@@ -41,10 +41,41 @@ public class FeedController {
 
         if(dto.getImages().size() > 0) {
             for (MultipartFile file : dto.getImages()) {
-                files.add(s3UploadService.upload(file, "/danram/feed", false));
+                files.add(s3UploadService.upload(file, "/danram/feed"));
             }
         }
 
         return ResponseEntity.ok(feedService.addFeed(dto, files));
+    }
+
+    @PostMapping(value = "/edit", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
+    public ResponseEntity<FeedEditResponseDto> editFeed(@ModelAttribute FeedEditRequestDto dto) throws IOException {
+        String img = null;
+
+        if(dto.getImage() != null)
+            img = s3UploadService.upload(dto.getImage(), "danram/feed");
+
+        return ResponseEntity.ok(feedService.editFeed(dto, img));
+    }
+
+    @DeleteMapping("/delete")
+    public ResponseEntity<String> deleteFeed(@RequestParam Long feedId) {
+        return ResponseEntity.ok(feedService.deleteFeed(feedId));
+    }
+
+    @GetMapping("/like")
+    public ResponseEntity<FeedLikeResponseDto> likeFeed(@RequestParam Long feedId) {
+        return ResponseEntity.ok(feedService.likeFeed(feedId));
+    }
+
+    @GetMapping("/unlike")
+    public ResponseEntity<FeedLikeResponseDto> unlikeFeed(@RequestParam Long feedId) {
+        return ResponseEntity.ok(feedService.unlikeFeed(feedId));
+    }
+
+    //free
+    @GetMapping("/all")
+    public ResponseEntity<List<FeedAllInfoResponseDto>> getALl(@RequestParam Long page) {
+        return ResponseEntity.ok(feedService.findAll(page));
     }
 }

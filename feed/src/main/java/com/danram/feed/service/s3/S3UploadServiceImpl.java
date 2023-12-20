@@ -20,7 +20,7 @@ public class S3UploadServiceImpl implements S3UploadService {
     private String bucket;
 
     @Override
-    public String upload(MultipartFile multipartFile, String dirName, boolean profile) throws IOException {
+    public String upload(MultipartFile multipartFile, String dirName) throws IOException {
         String fileName;
 
         fileName = multipartFile.getOriginalFilename();

@@ -39,6 +39,9 @@ public class Feed {
     @Column(name = "deleted_at", columnDefinition = "datetime")
     private LocalDateTime deletedAt;
 
+    @Column(name = "description", columnDefinition = "varchar", length = 50)
+    private String description;
+
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
             name = "feed_image",

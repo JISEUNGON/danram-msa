@@ -62,7 +62,7 @@ public class MemberServiceImpl implements MemberService {
                 .pro(false)
                 .nickname(dto.getNickname())
                 .email(dto.getEmail())
-                .accessToken(JwtUtil.createJwt(memberId))
+                .accessToken(JwtUtil.createJwt(memberId, dto.getEmail()))
                 .accessTokenExpiredAt(LocalDate.now().plusYears(1))
                 .refreshToken(JwtUtil.createRefreshToken(memberId))
                 .refreshTokenExpiredAt(LocalDate.now().plusYears(1))
@@ -192,7 +192,7 @@ public class MemberServiceImpl implements MemberService {
         Member member = memberRepository.findByMemberIdAndAccessTokenAndRefreshToken(id, accessToken,refreshToken)
                 .orElseThrow(() -> new MemberIdNotFoundException(id));
 
-        member.setAccessToken(JwtUtil.createJwt(id));
+        member.setAccessToken(JwtUtil.createJwt(id, member.getEmail()));
         member.setAccessTokenExpiredAt(LocalDate.now().plusDays(JwtUtil.ACCESS_TOKEN_EXPIRE_TIME));
         memberRepository.save(member);
 
@@ -209,10 +209,17 @@ public class MemberServiceImpl implements MemberService {
 
     @Override
     @Transactional
-    public List<Authority> getAuthorities() {
-        return memberRepository.findById(JwtUtil.getMemberId()).orElseThrow(
+    public List<String> getAuthorities() {
+        final List<Authority> authorities = memberRepository.findById(JwtUtil.getMemberId()).orElseThrow(
                 () -> new MemberIdNotFoundException(JwtUtil.getMemberId())
         ).getAuthorities();
+
+        List<String> auths = new ArrayList<>();
+
+        for(Authority authority: authorities)
+            auths.add(authority.getAuthorityName());
+
+        return auths;
     }
 
     private String getLoginType(Member member) {

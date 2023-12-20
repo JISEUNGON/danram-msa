@@ -20,7 +20,7 @@ public interface MemberService {
     public Optional<Member> checkDuplicatedEmail(String email);
     public LoginResponseDto signUp(OauthLoginRequestDto dto);
     public LoginResponseDto signIn(Member member);
-    public List<Authority> getAuthorities();
+    public List<String> getAuthorities();
     public String verifyMember();
     public MemberAdminResponseDto getMemberInfo(String memberId);
     public List<MemberAdminResponseDto> getMembers();

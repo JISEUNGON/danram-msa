@@ -7,13 +7,13 @@ import org.hibernate.annotations.CreationTimestamp;
 import java.time.LocalDateTime;
 
 @Entity
-@Table
+@Table(name = "feed_like")
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
 @Getter
 @Setter
-public class MemberLike {
+public class FeedLike {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "like_id", columnDefinition = "int")
@@ -25,8 +25,8 @@ public class MemberLike {
     @Column(name = "member_email", columnDefinition = "varchar", length = 50)
     private String memberEmail;
 
-    @Column(name = "id", columnDefinition = "int")
-    private Long id;
+    @Column(name = "feed_id", columnDefinition = "int")
+    private Long feedId;
 
     @Column(name = "created_at", columnDefinition = "date")
     @CreationTimestamp
@@ -34,10 +34,4 @@ public class MemberLike {
 
     @Column(name = "deleted", columnDefinition = "tinyint")
     private Boolean deleted;
-
-    @Column(name = "type", columnDefinition = "int")
-    private Long type;
-
-    @Column(name = "description", columnDefinition = "varchar", length = 200)
-    private String description;
 }

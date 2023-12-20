@@ -3,6 +3,7 @@ package com.danram.feed.config;
 import com.amazonaws.services.s3.AmazonS3;
 import com.danram.feed.repository.FeedRepository;
 import com.danram.feed.repository.ImageRepository;
+import com.danram.feed.repository.FeedLikeRepository;
 import com.danram.feed.service.feed.FeedService;
 import com.danram.feed.service.feed.FeedServiceImpl;
 import com.danram.feed.service.s3.S3UploadService;
@@ -14,11 +15,14 @@ import org.springframework.context.annotation.Configuration;
 public class SpringConfig {
     private final FeedRepository feedRepository;
     private final ImageRepository imageRepository;
+    private final FeedLikeRepository feedLikeRepository;
 
     public SpringConfig(final FeedRepository feedRepository,
-                        final ImageRepository imageRepository) {
+                        final ImageRepository imageRepository,
+                        final FeedLikeRepository feedLikeRepository) {
         this.feedRepository = feedRepository;
         this.imageRepository = imageRepository;
+        this.feedLikeRepository = feedLikeRepository;
     }
 
     @Bean
@@ -28,6 +32,6 @@ public class SpringConfig {
 
     @Bean
     public FeedService feedService() {
-        return new FeedServiceImpl(feedRepository, imageRepository);
+        return new FeedServiceImpl(feedRepository, imageRepository, feedLikeRepository);
     }
 }

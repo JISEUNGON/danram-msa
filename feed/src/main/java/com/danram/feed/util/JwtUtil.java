@@ -34,7 +34,7 @@ public class JwtUtil {
         return body.get("id", Long.class);
     }
 
-    public static List<String> getRoles() {
+    public static String getEmail() {
         String token = JwtUtil.getAccessToken();
 
         Claims body = Jwts.parserBuilder()
@@ -43,22 +43,7 @@ public class JwtUtil {
                 .parseClaimsJws(token)
                 .getBody();
 
-        return body.get("roles", List.class);
-    }
-
-    /**
-     * 토큰의 유효성  검증을 수행하는 validateToken 메소드
-     * */
-    public static boolean validateToken(String token) {
-        try {
-            Jwts.parserBuilder()
-                    .setSigningKey(JWT_SECRET_KEY)
-                    .build()
-                    .parseClaimsJws(token);
-            return true;
-        } catch (Exception e) {
-            return false;
-        }
+        return body.get("email", String.class);
     }
 
     public static String getAccessToken() {

@@ -22,8 +22,8 @@ public class JwtUserFilter extends AbstractGatewayFilterFactory<JwtUserFilter.Co
         super(Config.class);
     }
 
-    @Value("${server.port}")
-    private Long port;
+    @Value("${gateway.host}")
+    private String host;
 
     @Override
     public GatewayFilter apply(final Config config) {
@@ -33,7 +33,7 @@ public class JwtUserFilter extends AbstractGatewayFilterFactory<JwtUserFilter.Co
 
             //header 값
             String authorizationHeader = request.getHeaders().getFirst(HttpHeaders.AUTHORIZATION);
-            String memberIdString = request.getHeaders().getFirst("MemberId");
+            String memberIdString = request.getHeaders().getFirst("Member-Id");
 
             if(memberIdString == null || !memberIdString.startsWith("DHI ")) {
                 response.setStatusCode(HttpStatus.UNAUTHORIZED);
@@ -90,11 +90,11 @@ public class JwtUserFilter extends AbstractGatewayFilterFactory<JwtUserFilter.Co
 
             headers.setContentType(MediaType.APPLICATION_JSON); // Content-Type 헤더 설정
             headers.set("Authorization", "Bearer " + token);
-            headers.set("MemberId", "DHI " + memberId.toString());
+            headers.set("Member-Id", "DHI " + memberId.toString());
 
             HttpEntity<String> requestEntity = new HttpEntity<>(null, headers);
 
-            final String tokenResponse = restTemplate.exchange("http://localhost:" + port + "/member/verify", HttpMethod.GET, requestEntity, String.class).getBody();
+            final String tokenResponse = restTemplate.exchange(host, HttpMethod.GET, requestEntity, String.class).getBody();
 
             if(tokenResponse == null) {
                 log.info("role: {}", "ROLE_USER");

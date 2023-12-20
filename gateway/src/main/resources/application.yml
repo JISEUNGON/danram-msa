@@ -33,6 +33,11 @@ spring:
           predicates:
             - Path=/login/**
 
+        - id: no-auth-feed
+          uri: lb://FEED
+          predicates:
+            - Path=/feed/all
+
         - id: member
           uri: lb://MEMBER
           predicates:
@@ -50,7 +55,7 @@ spring:
         - id: feed
           uri: lb://FEED
           predicates:
-            - Path=/FEED/**
+            - Path=/feed/**
           filters:
             - JwtUserFilter
 
@@ -77,4 +82,7 @@ logging:
       springframework:
         cloud:
           gateway=ERROR:
+
+gateway:
+  host: ${GATEWAY_HOST}
 

@@ -31,13 +31,14 @@ public class JwtUtil {
         JWT_SECRET_KEY = key;
     }
 
-    public static String createJwt(Long memberId) {
+    public static String createJwt(Long memberId, String email) {
         Date now = new Date();
 
         Date expiredDate = new Date(now.getTime() + EXPIRATION_TIME);
 
         Map<String, Object> claims = new HashMap<>();
         claims.put("id", memberId);
+        claims.put("email", email);
 
         return Jwts.builder()
                 .setClaims(claims)
@@ -54,7 +55,6 @@ public class JwtUtil {
 
         Map<String, Object> claims = new HashMap<>();
         claims.put("id", JwtUtil.getMemberId());
-        //claims.put("roles", Arrays.asList(/*"ROLE_ADMIN", */"ROLE_USER"));
 
         return Jwts.builder()
                 .setClaims(claims)
@@ -107,7 +107,7 @@ public class JwtUtil {
 
     public static Long getMemberIdFromHeader() {
         HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest();
-        String memberIdHeader = request.getHeader("MemberId");
+        String memberIdHeader = request.getHeader("Member-Id");
         String memberIdString = null;
 
         if (memberIdHeader != null && memberIdHeader.startsWith("DHI ")) {
