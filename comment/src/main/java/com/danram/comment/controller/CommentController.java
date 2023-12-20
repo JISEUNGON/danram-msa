@@ -1,13 +1,17 @@
 package com.danram.comment.controller;
 
 import com.danram.comment.dto.request.CommentAddRequestDto;
+import com.danram.comment.dto.request.CommentEditRequestDto;
 import com.danram.comment.dto.response.CommentAddResponseDto;
 import com.danram.comment.dto.response.CommentAllResponseDto;
+import com.danram.comment.dto.response.CommentEditResponseDto;
 import com.danram.comment.service.CommentService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RequiredArgsConstructor
 @RestController
@@ -21,15 +25,29 @@ public class CommentController {
         return ResponseEntity.ok(commentService.addComment(dto));
     }
 
-    //edit
-    //delete
-    //like
-    //unlike
+    @PostMapping("/edit")
+    public ResponseEntity<CommentEditResponseDto> editComment(@RequestBody CommentEditRequestDto dto) {
+        return ResponseEntity.ok(commentService.editComment(dto));
+    }
+
+    @DeleteMapping("/delete")
+    public ResponseEntity<String> deleteComment(@RequestParam Long commentId) {
+        return ResponseEntity.ok(commentService.deleteComment(commentId));
+    }
+
+    @GetMapping("/like")
+    public ResponseEntity<Long> likeComment(@RequestParam Long commentId) {
+        return ResponseEntity.ok(commentService.likeComment(commentId));
+    }
+
+    @GetMapping("/unlike")
+    public ResponseEntity<Long> unlikeComment(@RequestParam Long commentId) {
+        return ResponseEntity.ok(commentService.unlikeComment(commentId));
+    }
 
     //free
     @GetMapping("/all")
-    public ResponseEntity<CommentAllResponseDto> getAllComment() {
-        return null;
-        //return ResponseEntity.ok(commentService.findAll());
+    public ResponseEntity<List<CommentAllResponseDto>> getAllComment(@RequestParam Long feedId) {
+        return ResponseEntity.ok(commentService.findAll(feedId));
     }
 }
