@@ -1,0 +1,13 @@
+server:
+  port: 8090
+
+spring:
+  application:
+    name: member
+
+eureka:
+  client:
+    register-with-eureka: true
+    fetch-registry: true
+    service-url:
+      defaultZone: ${EUREKA_SERVER_HOST}:8761/eureka
